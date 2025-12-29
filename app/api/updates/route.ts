@@ -15,13 +15,13 @@ export async function GET() {
     const updates = await prisma.update.findMany({
       orderBy: { id: "desc" },
     });
-    return NextResponse.json(updates, { headers: corsHeaders });
-  } catch (error) {
+    // Always return an array, even if empty
+    return NextResponse.json(updates || [], { headers: corsHeaders });
+  } catch (error: any) {
     console.error("Error fetching updates:", error);
-    return NextResponse.json(
-      { error: "Failed to fetch updates" },
-      { status: 500, headers: corsHeaders }
-    );
+    // Return empty array instead of error for widget compatibility
+    // This prevents the widget from showing "Failed to load"
+    return NextResponse.json([], { headers: corsHeaders });
   }
 }
 

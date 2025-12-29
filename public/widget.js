@@ -73,29 +73,41 @@
     
     // Load updates
     async function loadUpdates() {
+      box.innerHTML = "<h2>Updates</h2><p>Loading...</p>";
+      
       try {
         const r = await fetch(API_URL, {
           method: 'GET',
           headers: { 'Content-Type': 'application/json' },
-          cache: 'no-cache'
+          cache: 'no-cache',
+          mode: 'cors'
         });
         
-        if (!r.ok) throw new Error('API error: ' + r.status);
+        if (!r.ok) {
+          // If API returns error, show empty state
+          box.innerHTML = "<h2>Updates</h2><p>No updates yet.</p>";
+          return;
+        }
         
         const data = await r.json();
         
-        if (!data || !Array.isArray(data) || !data.length) {
+        // Handle both array and object responses
+        const updates = Array.isArray(data) ? data : (data.updates || []);
+        
+        if (!updates || !updates.length) {
           box.innerHTML = "<h2>Updates</h2><p>No updates yet.</p>";
           return;
         }
         
         box.innerHTML = "<h2>Updates</h2>" + 
-          data.map(function(x) {
-            return '<div class="yoyoItem"><h3>' + escapeHtml(x.title) + '</h3><p>' + escapeHtml(x.content) + '</p></div>';
-          }).join("");
+          updates.map(function(x) {
+            if (!x || !x.title) return '';
+            return '<div class="yoyoItem"><h3>' + escapeHtml(x.title) + '</h3><p>' + escapeHtml(x.content || '') + '</p></div>';
+          }).filter(function(x) { return x !== ''; }).join("");
       } catch(e) {
         console.error('Yoyo widget error:', e);
-        box.innerHTML = "<h2>Updates</h2><p>Failed to load.</p>";
+        // Show user-friendly message instead of "Failed to load"
+        box.innerHTML = "<h2>Updates</h2><p>No updates available at the moment.</p>";
       }
     }
     
