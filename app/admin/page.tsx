@@ -1,11 +1,14 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 export default function AdminPage() {
+  const router = useRouter();
   const [updates, setUpdates] = useState<any[]>([]);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
 
   async function fetchUpdates() {
     const res = await fetch("/api/updates");
@@ -14,8 +17,25 @@ export default function AdminPage() {
   }
 
   useEffect(() => {
-    fetchUpdates();
-  }, []);
+    // Check authentication
+    async function checkAuth() {
+      try {
+        const res = await fetch("/api/auth/check");
+        const data = await res.json();
+        if (data.authenticated) {
+          setIsAuthenticated(true);
+          fetchUpdates();
+        } else {
+          setIsAuthenticated(false);
+          router.push("/login");
+        }
+      } catch (error) {
+        setIsAuthenticated(false);
+        router.push("/login");
+      }
+    }
+    checkAuth();
+  }, [router]);
 
   async function submit() {
     const res = await fetch("/api/updates", {
@@ -32,6 +52,18 @@ export default function AdminPage() {
     } else {
       alert("Failed to add update");
     }
+  }
+
+  if (isAuthenticated === null) {
+    return (
+      <div style={{ padding: 40 }}>
+        <p>Loading...</p>
+      </div>
+    );
+  }
+
+  if (isAuthenticated === false) {
+    return null; // Will redirect
   }
 
   return (
