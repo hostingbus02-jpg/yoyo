@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Beamer Widget Embed Example</title>
+  <style>
+    body { font-family:sans-serif; max-width:800px; margin:auto; padding:40px; }
+    code { background:#f3f3f3; padding:8px 12px; display:block; margin:15px 0; border-radius:6px; }
+  </style>
+</head>
+<body>
+
+<h1>Beamer Widget Embed Example</h1>
+<p>This page demonstrates how to embed the widget on any website.</p>
+
+<h2>How to Embed:</h2>
+
+<code>
+&lt;script&gt; window.YOYO_API_URL = "http://localhost:3000/api/updates"; &lt;/script&gt;<br>
+&lt;script src="http://localhost:3000/widget.js"&gt;&lt;/script&gt;
+</code>
+
+<p><b>For production:</b> replace <b>localhost:3000</b> with your own domain.</p>
+
+<hr>
+
+<h2>Example:</h2>
+<p>Scroll down and look at the bottom-right corner — you should see the bell widget! 🔔</p>
+
+<script>
+  window.YOYO_API_URL = "http://localhost:3000/api/updates";
+</script>
+<script src="http://localhost:3000/widget.js"></script>
+
+<p style="margin-top:400px;font-size:20px">Scroll down to confirm it sticks fixed</p>
+
+</body>
+</html>
