@@ -2,7 +2,7 @@
 (function () {
   'use strict';
   
-  const API = "https://yoyo-liart.vercel.app/api/updates";
+  const API_URL = window.YOYO_API_URL || "https://yoyo-liart.vercel.app/api/updates";
   
   // Wait for DOM to be ready
   function init() {
@@ -74,7 +74,7 @@
     // Load updates
     async function loadUpdates() {
       try {
-        const r = await fetch(API, {
+        const r = await fetch(API_URL, {
           method: 'GET',
           headers: { 'Content-Type': 'application/json' },
           cache: 'no-cache'
