@@ -20,7 +20,7 @@ export default function Home() {
         ))}
       </div>
 
-      <BeamerWidget updates={updates} />
+      <BeamerWidget />
     </main>
   );
 }

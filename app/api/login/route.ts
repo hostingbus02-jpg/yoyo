@@ -1,17 +1,19 @@
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
-import { setSession } from "@/lib/auth";
 import { NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 
 export async function POST(req: Request) {
   const { email, password } = await req.json();
 
   const user = await prisma.user.findUnique({ where: { email } });
-  if (!user) return NextResponse.json({ error: "User not found" }, { status: 404 });
+  if (!user) return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
 
-  const valid = await bcrypt.compare(password, user.password);
-  if (!valid) return NextResponse.json({ error: "Wrong password" }, { status: 401 });
+  const match = await bcrypt.compare(password, user.password);
+  if (!match) return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
 
-  setSession(user.id.toString());
-  return NextResponse.json({ success: true });
+  const session = await getServerSession(authOptions);
+
+  return NextResponse.json({ success: true, user });
 }

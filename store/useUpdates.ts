@@ -3,8 +3,15 @@
 import { useState, useCallback, useEffect } from "react";
 import axios from "axios";
 
+type Update = {
+  id: number;
+  title: string;
+  content: string;
+  createdAt: Date;
+};
+
 export default function useUpdates() {
-  const [updates, setUpdates] = useState([]);
+  const [updates, setUpdates] = useState<Update[]>([]);
 
   const load = useCallback(async () => {
     const res = await axios.get("/api/updates");
