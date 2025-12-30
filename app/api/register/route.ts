@@ -45,18 +45,25 @@ export async function POST(req: Request) {
     }
     
     // Database connection errors
-    if (e.code === 'P1001' || e.code === 'P1000' || e.message?.includes("Can't reach database server") || e.message?.includes("connect") || e.message?.includes("timeout")) {
+    if (e.code === 'P1001' || e.code === 'P1000' || e.message?.includes("Can't reach database server") || e.message?.includes("connect") || e.message?.includes("timeout") || e.message?.includes("Tenant or user not found")) {
       const errorDetails = {
         code: e.code,
         message: e.message,
         meta: e.meta,
         hasDatabaseUrl: !!process.env.DATABASE_URL,
-        databaseUrlPreview: process.env.DATABASE_URL ? process.env.DATABASE_URL.substring(0, 30) + "..." : "NOT SET"
+        databaseUrlPreview: process.env.DATABASE_URL ? process.env.DATABASE_URL.substring(0, 50) + "..." : "NOT SET"
       };
       console.error("Database connection error details:", errorDetails);
       
+      let errorMsg = `Database connection failed: ${e.message || 'Unknown error'}. `;
+      if (e.message?.includes("Tenant or user not found")) {
+        errorMsg += "Connection pooler format may be wrong. Use direct connection: postgresql://postgres:Sambyal%40022@db.pqzmzuomafhqhppmybmt.supabase.co:5432/postgres?sslmode=require";
+      } else if (e.message?.includes("Can't reach database server")) {
+        errorMsg += "Verify: 1) DATABASE_URL is set in Vercel, 2) Connection string format is correct, 3) Password is URL-encoded (@ becomes %40)";
+      }
+      
       return NextResponse.json({ 
-        error: `Database connection failed. Error: ${e.code || 'Unknown'} - ${e.message || 'Connection timeout'}. Please verify: 1) DATABASE_URL is set correctly in Vercel, 2) Supabase project is not paused, 3) Network restrictions allow Vercel IPs, 4) Password is correct.` 
+        error: errorMsg
       }, { status: 500 });
     }
     
