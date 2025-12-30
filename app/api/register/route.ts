@@ -41,8 +41,11 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Email already exists" }, { status: 400 });
     }
     
-    if (e.code === 'P1001') {
-      return NextResponse.json({ error: "Database connection failed. Please check your database configuration." }, { status: 500 });
+    // Database connection errors
+    if (e.code === 'P1001' || e.message?.includes("Can't reach database server")) {
+      return NextResponse.json({ 
+        error: "Database connection failed. Please check: 1) DATABASE_URL is set in Vercel, 2) Use connection pooler URL (port 6543) for Supabase, 3) Database is accessible." 
+      }, { status: 500 });
     }
     
     return NextResponse.json({ 
