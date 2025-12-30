@@ -35,6 +35,9 @@ export async function POST(req: Request) {
     return NextResponse.json({ success: true, message: "User created successfully" });
   } catch (e: any) {
     console.error("REGISTER ERROR:", e);
+    console.error("Error code:", e.code);
+    console.error("Error message:", e.message);
+    console.error("Error meta:", e.meta);
     
     // Provide more specific error messages
     if (e.code === 'P2002') {
@@ -42,14 +45,18 @@ export async function POST(req: Request) {
     }
     
     // Database connection errors
-    if (e.code === 'P1001' || e.message?.includes("Can't reach database server") || e.message?.includes("connect")) {
-      console.error("Database connection error details:", {
+    if (e.code === 'P1001' || e.code === 'P1000' || e.message?.includes("Can't reach database server") || e.message?.includes("connect") || e.message?.includes("timeout")) {
+      const errorDetails = {
         code: e.code,
         message: e.message,
-        meta: e.meta
-      });
+        meta: e.meta,
+        hasDatabaseUrl: !!process.env.DATABASE_URL,
+        databaseUrlPreview: process.env.DATABASE_URL ? process.env.DATABASE_URL.substring(0, 30) + "..." : "NOT SET"
+      };
+      console.error("Database connection error details:", errorDetails);
+      
       return NextResponse.json({ 
-        error: "Database connection failed. Check: 1) DATABASE_URL is set in Vercel Environment Variables, 2) Use direct connection (port 5432) with ?sslmode=require, 3) Supabase database is running and accessible, 4) No network restrictions blocking Vercel." 
+        error: `Database connection failed. Error: ${e.code || 'Unknown'} - ${e.message || 'Connection timeout'}. Please verify: 1) DATABASE_URL is set correctly in Vercel, 2) Supabase project is not paused, 3) Network restrictions allow Vercel IPs, 4) Password is correct.` 
       }, { status: 500 });
     }
     
