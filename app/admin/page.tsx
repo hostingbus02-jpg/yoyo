@@ -20,7 +20,20 @@ export default function AdminPage() {
     // Check authentication
     async function checkAuth() {
       try {
-        const res = await fetch("/api/auth/check");
+        const res = await fetch("/api/auth/check", {
+          method: "GET",
+          credentials: "include", // Important: include cookies
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        
+        if (!res.ok) {
+          setIsAuthenticated(false);
+          router.push("/login");
+          return;
+        }
+        
         const data = await res.json();
         if (data.authenticated) {
           setIsAuthenticated(true);
@@ -30,6 +43,7 @@ export default function AdminPage() {
           router.push("/login");
         }
       } catch (error) {
+        console.error("Auth check error:", error);
         setIsAuthenticated(false);
         router.push("/login");
       }
@@ -40,6 +54,7 @@ export default function AdminPage() {
   async function submit() {
     const res = await fetch("/api/updates", {
       method: "POST",
+      credentials: "include", // Include cookies for auth
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ title, content }),
     });

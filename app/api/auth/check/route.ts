@@ -7,9 +7,10 @@ export async function GET() {
     if (!session) {
       return NextResponse.json({ authenticated: false }, { status: 401 });
     }
-    return NextResponse.json({ authenticated: true });
-  } catch (error) {
-    return NextResponse.json({ authenticated: false }, { status: 401 });
+    return NextResponse.json({ authenticated: true, sessionId: session });
+  } catch (error: any) {
+    console.error("Auth check error:", error);
+    return NextResponse.json({ authenticated: false, error: error.message }, { status: 401 });
   }
 }
 
