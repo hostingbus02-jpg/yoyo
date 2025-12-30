@@ -42,9 +42,14 @@ export async function POST(req: Request) {
     }
     
     // Database connection errors
-    if (e.code === 'P1001' || e.message?.includes("Can't reach database server")) {
+    if (e.code === 'P1001' || e.message?.includes("Can't reach database server") || e.message?.includes("connect")) {
+      console.error("Database connection error details:", {
+        code: e.code,
+        message: e.message,
+        meta: e.meta
+      });
       return NextResponse.json({ 
-        error: "Database connection failed. Please check: 1) DATABASE_URL is set in Vercel, 2) Use connection pooler URL (port 6543) for Supabase, 3) Database is accessible." 
+        error: "Database connection failed. Check: 1) DATABASE_URL is set in Vercel Environment Variables, 2) Use direct connection (port 5432) with ?sslmode=require, 3) Supabase database is running and accessible, 4) No network restrictions blocking Vercel." 
       }, { status: 500 });
     }
     
