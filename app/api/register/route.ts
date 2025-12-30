@@ -59,7 +59,7 @@ export async function POST(req: Request) {
       if (e.message?.includes("Tenant or user not found")) {
         errorMsg += "Connection pooler format may be wrong. Use direct connection: postgresql://postgres:Sambyal%40022@db.pqzmzuomafhqhppmybmt.supabase.co:5432/postgres?sslmode=require";
       } else if (e.message?.includes("Can't reach database server")) {
-        errorMsg += "Verify: 1) DATABASE_URL is set in Vercel, 2) Connection string format is correct, 3) Password is URL-encoded (@ becomes %40)";
+        errorMsg += "CRITICAL: 1) Check if Supabase project is PAUSED (unpause it), 2) Verify DATABASE_URL in Vercel matches: postgresql://postgres:Sambyal%40022@db.pqzmzuomafhqhppmybmt.supabase.co:5432/postgres?sslmode=require, 3) Try connection pooler from Supabase 'Connect' button, 4) Check Supabase project status is 'Active'";
       }
       
       return NextResponse.json({ 
