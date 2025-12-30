@@ -1,0 +1,6 @@
+CORRECT CONNECTION STRING FOR VERCEL:
+
+postgresql://postgres:Sambyal%40022@db.pqzmzuomafhqhppmybmt.supabase.co:5432/postgres?sslmode=require
+
+Copy this exact string and set it as DATABASE_URL in Vercel Environment Variables.
+
