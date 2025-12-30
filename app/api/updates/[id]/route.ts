@@ -1,7 +1,5 @@
 import { NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { prisma } from "@/lib/prisma";
 
 export async function PUT(
   req: Request,
@@ -13,7 +11,7 @@ export async function PUT(
     const { title, content } = await req.json();
 
     const updated = await prisma.update.update({
-      where: { id: Number(id) },
+      where: { id: id },
       data: { title, content }
     });
 
@@ -35,7 +33,7 @@ export async function DELETE(
     const params = await context.params;
     const { id } = params;
 
-    await prisma.update.delete({ where: { id: Number(id) } });
+    await prisma.update.delete({ where: { id: id } });
     return NextResponse.json({ success: true });
   } catch (err: any) {
     console.error("DELETE Error:", err);

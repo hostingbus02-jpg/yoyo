@@ -13,7 +13,7 @@ const corsHeaders = {
 export async function GET() {
   try {
     const updates = await prisma.update.findMany({
-      orderBy: { id: "desc" },
+      orderBy: { created_at: "desc" },
     });
     // Always return an array, even if empty
     return NextResponse.json(updates || [], { headers: corsHeaders });

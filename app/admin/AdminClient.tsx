@@ -7,7 +7,7 @@ export default function AdminClient() {
   const { updates, addUpdate, editUpdate, deleteUpdate } = useUpdates();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [editTitle, setEditTitle] = useState("");
   const [editContent, setEditContent] = useState("");
   const [stats, setStats] = useState({ updates: 0, users: 0, lastUpdate: null as string | null });
@@ -38,7 +38,7 @@ export default function AdminClient() {
     setEditContent("");
   };
 
-  const saveEdit = async (e: any, id: number) => {
+  const saveEdit = async (e: any, id: string) => {
     e.preventDefault();
     if (!editTitle.trim() || !editContent.trim()) {
       alert("Title and content cannot be empty");
@@ -55,7 +55,7 @@ export default function AdminClient() {
     }
   };
 
-  const handleDelete = async (id: number) => {
+  const handleDelete = async (id: string) => {
     if (confirm("Are you sure you want to delete this update?")) {
       try {
         await deleteUpdate(id);

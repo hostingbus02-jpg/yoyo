@@ -4,10 +4,10 @@ import { useState, useCallback, useEffect } from "react";
 import axios from "axios";
 
 type Update = {
-  id: number;
+  id: string;
   title: string;
   content: string;
-  createdAt: Date;
+  created_at: Date;
 };
 
 export default function useUpdates() {
@@ -24,13 +24,13 @@ export default function useUpdates() {
     load();
   };
 
-  const editUpdate = async (id: number, title: string, content: string) => {
+  const editUpdate = async (id: string, title: string, content: string) => {
     const res = await axios.put(`/api/updates/${id}`, { title, content });
     setUpdates(prev => prev.map(u => (u.id === id ? res.data : u)));
     load();
   };
 
-  const deleteUpdate = async (id: number) => {
+  const deleteUpdate = async (id: string) => {
     await axios.delete(`/api/updates/${id}`);
     setUpdates(prev => prev.filter(u => u.id !== id));
     load();

@@ -5,14 +5,14 @@ export async function GET() {
   const updates = await prisma.update.count();
   const users = await prisma.user.count();
   const last = await prisma.update.findFirst({
-    orderBy: { createdAt: "desc" },
-    select: { createdAt: true }
+    orderBy: { created_at: "desc" },
+    select: { created_at: true }
   });
 
   return NextResponse.json({
     updates,
     users,
-    lastUpdate: last?.createdAt || null
+    lastUpdate: last?.created_at || null
   });
 }
 
