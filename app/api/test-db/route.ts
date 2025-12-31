@@ -1,13 +1,20 @@
 import { NextResponse } from "next/server";
 
 export async function GET() {
+  const dbUrl = process.env.DATABASE_URL || "";
+  const hasQuotes = dbUrl.startsWith('"') || dbUrl.startsWith("'");
+  const cleanUrl = dbUrl.replace(/^["']|["']$/g, ''); // Remove quotes if present
+  
   const info = {
     hasDatabaseUrl: !!process.env.DATABASE_URL,
-    databaseUrlLength: process.env.DATABASE_URL?.length || 0,
-    databaseUrlStart: process.env.DATABASE_URL?.substring(0, 50) || "NOT SET",
-    databaseUrlEnd: process.env.DATABASE_URL?.substring((process.env.DATABASE_URL?.length || 0) - 30) || "NOT SET",
+    databaseUrlLength: dbUrl.length,
+    fullUrl: cleanUrl, // Show full URL without quotes
+    hasQuotes: hasQuotes,
+    urlStart: cleanUrl.substring(0, 60),
+    urlEnd: cleanUrl.substring(cleanUrl.length - 40),
     nodeEnv: process.env.NODE_ENV,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
+    recommendation: hasQuotes ? "WARNING: Connection string has quotes - remove them in Vercel!" : "Connection string format looks OK"
   };
   
   return NextResponse.json(info);
